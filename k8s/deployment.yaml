@@ -1,0 +1,88 @@
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: kibana
+  namespace: common
+  labels:
+    app: kibana
+    component: kibana
+    tier: infrastructure
+spec:
+  replicas: 1
+  strategy:
+    type: RollingUpdate
+    rollingUpdate:
+      maxUnavailable: 0
+      maxSurge: 1
+  selector:
+    matchLabels:
+      app: kibana
+  template:
+    metadata:
+      labels:
+        app: kibana
+        component: kibana
+        tier: infrastructure
+        version: 9.2.3
+    spec:
+      containers:
+        - name: kibana
+          image: docker.elastic.co/kibana/kibana:9.2.3
+          env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
+            - name: ELASTICSEARCH_USERNAME
+              value: "elastic"
+            - name: ELASTICSEARCH_PASSWORD
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-secret
+                  key: elastic-password
+            - name: xpack.security.enabled
+              value: "false"
+            - name: NODE_OPTIONS
+              value: "--max-old-space-size=512"
+          resources:
+            requests:
+              memory: 512Mi
+              cpu: 250m
+            limits:
+              memory: 1Gi
+              cpu: 1000m
+          ports:
+            - containerPort: 5601
+              name: kibana
+          readinessProbe:
+            initialDelaySeconds: 30
+            periodSeconds: 10
+            httpGet:
+              path: /api/status
+              port: 5601
+          livenessProbe:
+            initialDelaySeconds: 90
+            periodSeconds: 20
+            httpGet:
+              path: /api/status
+              port: 5601
+          volumeMounts:
+            - name: kibana-data
+              mountPath: /usr/share/kibana/data
+      volumes:
+        - name: kibana-data
+          persistentVolumeClaim:
+            claimName: kibana-data
+
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: kibana
+  namespace: common
+spec:
+  type: ClusterIP
+  selector:
+    app: kibana
+  ports:
+    - port: 5601
+      targetPort: 5601
+      name: kibana

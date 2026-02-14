@@ -1,0 +1,25 @@
+version: "3.8"
+
+services:
+  kibana:
+    image: docker.elastic.co/kibana/kibana:9.2.3
+    container_name: kibana
+    restart: always
+    environment:
+      - ELASTICSEARCH_HOSTS=http://elasticsearch:9200
+      - xpack.security.enabled=false
+      # Isse memory crash nahi hoga
+      - "NODE_OPTIONS=--max-old-space-size=512"
+    ports:
+      - "5601:5601"
+    volumes:
+      - kibana_data:/usr/share/kibana/data
+    networks:
+      - microservices-network
+
+volumes:
+  kibana_data:
+
+networks: 
+  microservices-network:
+    external: true
