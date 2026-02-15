@@ -67,13 +67,15 @@ spec:
             initialDelaySeconds: 60
             periodSeconds: 10
             timeoutSeconds: 5
+            failureThreshold: 5
             httpGet:
               path: /api/status
               port: 5601
           livenessProbe:
-            initialDelaySeconds: 180
-            periodSeconds: 20
+            initialDelaySeconds: 300
+            periodSeconds: 30
             timeoutSeconds: 5
+            failureThreshold: 5
             httpGet:
               path: /api/status
               port: 5601
