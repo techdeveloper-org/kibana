@@ -45,13 +45,10 @@ spec:
             - name: ELASTICSEARCH_USERNAME
               value: "admin"
             - name: ELASTICSEARCH_PASSWORD
-              value: "QpVqK7qKJdunKGy6"
-            - name: XPACK_SECURITY_ENCRYPTIONKEY
-              value: "vps9cedd984securekeykibana32char"
-            - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY
-              value: "vps9cedd984securekeykibana32char"
-            - name: XPACK_REPORTING_ENCRYPTIONKEY
-              value: "vps9cedd984securekeykibana32char"
+              valueFrom:
+                secretKeyRef:
+                  name: elasticsearch-secret
+                  key: elastic-password
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
           resources:
