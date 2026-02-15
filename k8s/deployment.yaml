@@ -64,14 +64,16 @@ spec:
             - containerPort: 5601
               name: kibana
           readinessProbe:
-            initialDelaySeconds: 30
+            initialDelaySeconds: 60
             periodSeconds: 10
+            timeoutSeconds: 5
             httpGet:
               path: /api/status
               port: 5601
           livenessProbe:
-            initialDelaySeconds: 90
+            initialDelaySeconds: 180
             periodSeconds: 20
+            timeoutSeconds: 5
             httpGet:
               path: /api/status
               port: 5601
