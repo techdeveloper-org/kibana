@@ -49,6 +49,12 @@ spec:
                 secretKeyRef:
                   name: elasticsearch-secret
                   key: elastic-password
+            - name: XPACK_SECURITY_ENCRYPTIONKEY
+              value: "vps9cedd984securekeykibana32char"
+            - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY
+              value: "vps9cedd984securekeykibana32char"
+            - name: XPACK_REPORTING_ENCRYPTIONKEY
+              value: "vps9cedd984securekeykibana32char"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
           resources:
