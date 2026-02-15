@@ -90,6 +90,7 @@ pipeline {
             }
         }
 
+        /*
         stage('Verify Rollout Status') {
 
             steps {
@@ -184,6 +185,7 @@ pipeline {
                 }
             }
         }
+        */
 
         stage('Deployment Summary') {
 
