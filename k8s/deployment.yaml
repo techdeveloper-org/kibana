@@ -55,6 +55,8 @@ spec:
               value: "vps9cedd984securekeykibana32char"
             - name: XPACK_REPORTING_ENCRYPTIONKEY
               value: "vps9cedd984securekeykibana32char"
+            - name: LOGGING_ROOT_LEVEL
+              value: "debug"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
           resources:
