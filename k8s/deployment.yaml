@@ -46,13 +46,14 @@ spec:
                   name: elasticsearch-secret
                   key: elastic-password
             - name: NODE_OPTIONS
-              value: "--max-old-space-size=2048"
-          volumeMounts:
-            - name: kibana-data
-              mountPath: /usr/share/kibana/data
-            - name: kibana-config
-              mountPath: /usr/share/kibana/config/kibana.yml
-              subPath: kibana.yml
+              value: "--max-old-space-size=4096"
+          resources:
+            requests:
+              memory: 4Gi
+              cpu: 1000m
+            limits:
+              memory: 6Gi # Migration Boost
+              cpu: 2000m
       volumes:
         - name: kibana-data
           persistentVolumeClaim:
