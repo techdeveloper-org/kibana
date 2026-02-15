@@ -40,11 +40,18 @@ spec:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:9.2.3
           env:
+            - name: ELASTICSEARCH_HOSTS
+              value: "http://elasticsearch:9200"
+            - name: ELASTICSEARCH_USERNAME
+              value: "admin"
             - name: ELASTICSEARCH_PASSWORD
-              valueFrom:
-                secretKeyRef:
-                  name: elasticsearch-secret
-                  key: elastic-password
+              value: "QpVqK7qKJdunKGy6"
+            - name: XPACK_SECURITY_ENCRYPTIONKEY
+              value: "vps9cedd984securekeykibana32char"
+            - name: XPACK_ENCRYPTEDSAVEDOBJECTS_ENCRYPTIONKEY
+              value: "vps9cedd984securekeykibana32char"
+            - name: XPACK_REPORTING_ENCRYPTIONKEY
+              value: "vps9cedd984securekeykibana32char"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
           resources:
@@ -52,15 +59,34 @@ spec:
               memory: 4Gi
               cpu: 1000m
             limits:
-              memory: 6Gi # Migration Boost
+              memory: 6Gi
               cpu: 2000m
+          ports:
+            - containerPort: 5601
+              name: kibana
+          readinessProbe:
+            initialDelaySeconds: 120 # 2 min migration wait
+            periodSeconds: 15
+            timeoutSeconds: 5
+            failureThreshold: 10
+            httpGet:
+              path: /api/status
+              port: 5601
+          livenessProbe:
+            initialDelaySeconds: 600 # 10 min tak pod ko kill nahi karega K8s
+            periodSeconds: 30
+            timeoutSeconds: 5
+            failureThreshold: 3
+            httpGet:
+              path: /api/status
+              port: 5601
+          volumeMounts:
+            - name: kibana-data
+              mountPath: /usr/share/kibana/data
       volumes:
         - name: kibana-data
           persistentVolumeClaim:
             claimName: kibana-data
-        - name: kibana-config
-          configMap:
-            name: kibana-config
 
 ---
 apiVersion: v1
