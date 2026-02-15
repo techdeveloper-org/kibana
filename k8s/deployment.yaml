@@ -32,7 +32,7 @@ spec:
             - name: ELASTICSEARCH_HOSTS
               value: "http://elasticsearch:9200"
             - name: ELASTICSEARCH_USERNAME
-              value: "elastic"
+              value: "admin"
             - name: ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
