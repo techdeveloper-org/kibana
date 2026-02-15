@@ -49,25 +49,27 @@ spec:
                 secretKeyRef:
                   name: elasticsearch-secret
                   key: elastic-password
+            # FIXED: Security enabled hona chahiye agar ES secure hai
             - name: xpack.security.enabled
-              value: "false"
+              value: "true" 
             - name: NODE_OPTIONS
               value: "--max-old-space-size=1536"
           resources:
             requests:
-              memory: 1Gi
-              cpu: 250m
+              memory: 1.5Gi # Thoda badha diya startup ke liye
+              cpu: 500m
             limits:
-              memory: 2Gi
+              memory: 3Gi # Proper prod limits
               cpu: 1000m
           ports:
             - containerPort: 5601
               name: kibana
           readinessProbe:
-            initialDelaySeconds: 60
+            # FIXED: Migrations ke liye 3 minute ka wait
+            initialDelaySeconds: 180 
             periodSeconds: 10
             timeoutSeconds: 5
-            failureThreshold: 5
+            failureThreshold: 10 # Zyada tolerance
             httpGet:
               path: /api/status
               port: 5601
@@ -86,18 +88,3 @@ spec:
         - name: kibana-data
           persistentVolumeClaim:
             claimName: kibana-data
-
----
-apiVersion: v1
-kind: Service
-metadata:
-  name: kibana
-  namespace: common
-spec:
-  type: ClusterIP
-  selector:
-    app: kibana
-  ports:
-    - port: 5601
-      targetPort: 5601
-      name: kibana
