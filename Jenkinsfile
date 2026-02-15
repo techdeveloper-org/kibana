@@ -60,8 +60,7 @@ pipeline {
                         try {
                             if (isUnix()) {
                                 sh """
-                                    # Create namespace if not exists
-                                    kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+
 
                                     # Apply K8s manifests
                                     kubectl apply -f k8s/
@@ -70,8 +69,7 @@ pipeline {
                                 """
                             } else {
                                 bat """
-                                    REM Create namespace if not exists
-                                    kubectl create namespace ${NAMESPACE} --dry-run=client -o yaml | kubectl apply -f -
+
 
                                     REM Apply K8s manifests
                                     kubectl apply -f k8s/
