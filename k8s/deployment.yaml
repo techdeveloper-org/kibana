@@ -25,6 +25,17 @@ spec:
         tier: infrastructure
         version: 9.2.3
     spec:
+      securityContext:
+        fsGroup: 1000
+      initContainers:
+      - name: fix-permissions
+        image: busybox
+        command: ["sh", "-c", "chown -R 1000:1000 /usr/share/kibana/data"]
+        securityContext:
+          runAsUser: 0
+        volumeMounts:
+        - name: kibana-data
+          mountPath: /usr/share/kibana/data
       containers:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:9.2.3
