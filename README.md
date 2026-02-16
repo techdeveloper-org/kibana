@@ -65,8 +65,8 @@ Kibana is the visualization and management UI for Elasticsearch. It provides pow
 
 ```bash
 # Clone repository
-git clone https://github.com/techdeveloper-org/kibana-docker.git
-cd kibana-docker
+git clone https://github.com/techdeveloper-org/kibana.git
+cd kibana
 
 # Ensure Elasticsearch is running
 docker ps | grep elasticsearch
