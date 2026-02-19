@@ -36,6 +36,28 @@ spec:
         volumeMounts:
         - name: kibana-data
           mountPath: /usr/share/kibana/data
+      - name: setup-kibana-system
+        image: curlimages/curl:8.5.0
+        command:
+        - sh
+        - -c
+        - |
+          echo "Waiting for Elasticsearch..."
+          until curl -sf -u "admin:${ES_PASS}" "http://elasticsearch:9200/_cluster/health" | grep -qE '"status":"(green|yellow)"'; do
+            echo "Elasticsearch not ready, retrying in 5s..."
+            sleep 5
+          done
+          echo "Elasticsearch ready. Setting kibana_system password..."
+          curl -sf -X POST -u "admin:${ES_PASS}" \
+            "http://elasticsearch:9200/_security/user/kibana_system/_password" \
+            -H "Content-Type: application/json" \
+            -d "{\"password\": \"${ES_PASS}\"}" && echo "kibana_system password set." || echo "Failed to set kibana_system password"
+        env:
+        - name: ES_PASS
+          valueFrom:
+            secretKeyRef:
+              name: elasticsearch-secret
+              key: elastic-password
       containers:
         - name: kibana
           image: docker.elastic.co/kibana/kibana:9.2.3
@@ -43,7 +65,7 @@ spec:
             - name: ELASTICSEARCH_HOSTS
               value: "http://elasticsearch:9200"
             - name: ELASTICSEARCH_USERNAME
-              value: "admin"
+              value: "kibana_system"
             - name: ELASTICSEARCH_PASSWORD
               valueFrom:
                 secretKeyRef:
@@ -55,8 +77,10 @@ spec:
               value: "vps9cedd984securekeykibana32char"
             - name: XPACK_REPORTING_ENCRYPTIONKEY
               value: "vps9cedd984securekeykibana32char"
+            - name: ELASTICSEARCH_REQUESTTIMEOUT
+              value: "30000"
             - name: LOGGING_ROOT_LEVEL
-              value: "debug"
+              value: "info"
             - name: NODE_OPTIONS
               value: "--max-old-space-size=4096"
           resources:
