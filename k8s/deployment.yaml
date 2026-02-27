@@ -65,9 +65,9 @@ spec:
             - name: SERVER_SSL_ENABLED
               value: "true"
             - name: SERVER_SSL_CERTIFICATE
-              value: "/usr/share/kibana/config/certs/tls.crt"
+              value: "/app/ssl/tls.crt"
             - name: SERVER_SSL_KEY
-              value: "/usr/share/kibana/config/certs/tls.key"
+              value: "/app/ssl/tls.key"
             - name: ELASTICSEARCH_HOSTS
               value: "https://elasticsearch:9200"
             - name: ELASTICSEARCH_SSL_VERIFICATIONMODE
@@ -123,7 +123,7 @@ spec:
             - name: kibana-data
               mountPath: /usr/share/kibana/data
             - name: ssl-certs
-              mountPath: /usr/share/kibana/config/certs/
+              mountPath: /app/ssl/
               readOnly: true
       volumes:
         - name: kibana-data
