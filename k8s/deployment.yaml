@@ -43,13 +43,13 @@ spec:
         - -c
         - |
           echo "Waiting for Elasticsearch..."
-          until curl -sf -u "admin:${ES_PASS}" "http://elasticsearch:9200/_cluster/health" | grep -qE '"status":"(green|yellow)"'; do
+          until curl -sfk -u "admin:${ES_PASS}" "https://elasticsearch:9200/_cluster/health" | grep -qE '"status":"(green|yellow)"'; do
             echo "Elasticsearch not ready, retrying in 5s..."
             sleep 5
           done
           echo "Elasticsearch ready. Setting kibana_system password..."
-          curl -sf -X POST -u "admin:${ES_PASS}" \
-            "http://elasticsearch:9200/_security/user/kibana_system/_password" \
+          curl -sfk -X POST -u "admin:${ES_PASS}" \
+            "https://elasticsearch:9200/_security/user/kibana_system/_password" \
             -H "Content-Type: application/json" \
             -d "{\"password\": \"${ES_PASS}\"}" && echo "kibana_system password set." || echo "Failed to set kibana_system password"
         env:
@@ -69,7 +69,9 @@ spec:
             - name: SERVER_SSL_KEY
               value: "/usr/share/kibana/config/certs/tls.key"
             - name: ELASTICSEARCH_HOSTS
-              value: "http://elasticsearch:9200"
+              value: "https://elasticsearch:9200"
+            - name: ELASTICSEARCH_SSL_VERIFICATIONMODE
+              value: "certificate"
             - name: ELASTICSEARCH_USERNAME
               value: "kibana_system"
             - name: ELASTICSEARCH_PASSWORD
