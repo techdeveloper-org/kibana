@@ -70,6 +70,8 @@ spec:
               value: "/app/ssl/tls.key"
             - name: ELASTICSEARCH_HOSTS
               value: "https://elasticsearch:9200"
+            - name: ELASTICSEARCH_SSL_CERTIFICATEAUTHORITIES
+              value: "/app/ssl/ca.crt"
             - name: ELASTICSEARCH_SSL_VERIFICATIONMODE
               value: "certificate"
             - name: ELASTICSEARCH_USERNAME
