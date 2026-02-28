@@ -56,9 +56,10 @@ spec:
     - to:
         - podSelector: {}
 
-    # External HTTPS (for plugins, updates)
+    # External HTTPS (for plugins, updates, Elastic registry)
     - to:
-        - namespaceSelector: {}
+        - ipBlock:
+            cidr: 0.0.0.0/0
       ports:
         - protocol: TCP
           port: 443
