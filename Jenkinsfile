@@ -88,42 +88,15 @@ pipeline {
             }
         }
 
-        /*
         stage('Verify Rollout Status') {
-
+            when {
+                expression { return !params.SKIP_DEPLOY }
+            }
             steps {
                 script {
-                    echo "⏳ Waiting for rollout to complete..."
-                    def kubeconfig = isUnix() ? env.KUBECONFIG_UNIX : env.KUBECONFIG_WIN
-
-                    withEnv(["KUBECONFIG=${kubeconfig}"]) {
-                        try {
-                            if (isUnix()) {
-                                sh """
-                                    # Wait for deployment rollout
-                                    kubectl rollout status deployment/${SERVICE_NAME} \
-                                        -n ${NAMESPACE} \
-                                        --timeout=${DEPLOYMENT_TIMEOUT} || exit 1
-
-                                    echo "Rollout completed successfully"
-                                """
-                            } else {
-                                bat """
-                                    REM Wait for deployment rollout
-                                    kubectl rollout status deployment/${SERVICE_NAME} ^
-                                        -n ${NAMESPACE} ^
-                                        --timeout=${DEPLOYMENT_TIMEOUT} || exit /b 1
-
-                                    echo Rollout completed successfully
-                                """
-                            }
-                            echo "✅ Rollout verified successfully"
-                        } catch (Exception e) {
-                            echo "❌ Rollout verification failed: ${e.message}"
-                            currentBuild.result = 'FAILURE'
-                            error("Rollout failed - initiating rollback")
-                        }
-                    }
+                    echo "Deployment triggered. Pod will start on its own."
+                    echo "Check rollout: kubectl rollout status deployment/${SERVICE_NAME} -n ${NAMESPACE}"
+                    echo "Check logs: kubectl logs -l app=${SERVICE_NAME} -n ${NAMESPACE} --tail=100 -f"
                 }
             }
         }
