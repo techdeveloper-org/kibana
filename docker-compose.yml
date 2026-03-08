@@ -3,6 +3,7 @@ version: "3.8"
 services:
   kibana:
     image: docker.elastic.co/kibana/kibana:9.2.3
+    mem_limit: 1g
     container_name: kibana
     restart: always
     environment:
